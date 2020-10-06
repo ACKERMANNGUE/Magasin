@@ -8,7 +8,8 @@
 const WIDTH_CANVAS = 1200;
 const HEIGHT_CANVAS = 800;
 const DEFAULT_NUMBER_COUNTERS = 8;
-const DEFAULT_NUMBER_CUSTOMERS = 1;
+const DEFAULT_NUMBER_CUSTOMERS = 3;
+const DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER = 5;
 
 class Shop {
     /**
@@ -47,7 +48,7 @@ class Shop {
             for (let i = 0; i < nbCounters; i++) {
                 let width = 75;
                 let height = 75;
-                this.counters.push(new Counter(x+(width + 10) * i, y, width, height, 5, 30, 30));
+                this.counters.push(new Counter(x+(width + 10) * i, y, width, height, this.customers ,DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER, 30, 30));
             }
     }
 
@@ -57,17 +58,16 @@ class Shop {
             let realYCoordinate = this.customers[i].positionY + this.customers[i].height;
 
             if(realXCoordinate < 0){
-                this.customers[i].Move(1,0);
+                this.customers[i].Move(0);
+            }
+            if(realYCoordinate < 0){ 
+                this.customers[i].Move(1);
             }
             if(realXCoordinate > WIDTH_CANVAS){
-                this.customers[i].Move(-1,0);
-            }
-
-            if(realYCoordinate < 0){
-                this.customers[i].Move(0,-1);
+                this.customers[i].Move(2);
             }
             if(realYCoordinate > HEIGHT_CANVAS - 100){
-                this.customers[i].Move(0,-1);
+                this.customers[i].Move(3);
             }
         }
     }

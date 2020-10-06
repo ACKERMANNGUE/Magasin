@@ -10,6 +10,11 @@ const MOVE_DOWN = 1;
 const MOVE_LEFT = 2;
 const MOVE_UP = 3;
 
+const EAST = 0;
+const SOUTH = 1;
+const WEST = 2;
+const NORTH = 3;
+
 class Customer {
 
     /**
@@ -19,15 +24,19 @@ class Customer {
      * @param {*} width Width of the customer
      * @param {*} height Height of the customer
      * @param {*} speed Displacement speed of the customer
+     * @param {*} counters Counter existing the shop
      * @param {*} color Color of the customer
      */
-    constructor(positionX, positionY, width, height, speed) {
+    constructor(positionX, positionY, width, height, speed, counters) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.width = width;
         this.height = height;
         this.speed = speed;
         this.color = color(255, 255, 255);
+        this.counters = counters;
+        this.timeInShop = random(2, 4);
+        this.orientation = NORTH;
     }
 
     /**
@@ -38,6 +47,36 @@ class Customer {
         ellipse(this.positionX, this.positionY, this.width, this.height);
     }
 
+    DecreaseTimeInShop(){
+        var timer = Math.floor(this.timeInShop);
+        var counters = this.counters;
+        console.log(timer);
+        setInterval(function () {
+            if (--timer < 0) {
+                for (let i = 0; i < counters.length; i++) {
+                    if(counters[i].IsCounterOpenAndQueueIsNotFull()){
+                        //rotation mais à revoir
+                            // this.speed.x *= Math.cos(this.orientation * 90) + Math.sin(this.orientation * 90);
+                            // this.speed.y *= -Math.sin(this.orientation * 90) + Math.cos(this.orientation * 90);
+        
+                        
+                        //Reprendre notre position
+                        this.positionX;
+                        this.positionY;
+        
+                        //Où est la caisse
+                        counters[i].positionX;
+                        counters[i].positionY;
+        
+                        //Trajectoir du client à la caisse 
+                        let trajectory = Math.sqrt(Math.pow(this.positionX - counters[i].positionX, 2) + Math.pow(this.positionY - counters[i].positionY, 2))
+        
+                        //Établir un vecteur y allant
+                    }
+                }
+            }
+        }, 1000);
+    }
 
     /**
      * Move the customer in the specified direction
@@ -46,15 +85,19 @@ class Customer {
     Move(direction){
         switch (direction) {
             case MOVE_RIGHT:
+                this.orientation = EAST;
                 this.speed.mult(createVector(-1, 1));
                 break;
             case MOVE_DOWN:
+                this.orientation = SOUTH;
                 this.speed.mult(createVector(1, -1));
                 break;
             case MOVE_LEFT:
+                this.orientation = WEST;
                 this.speed.mult(createVector(-1, 1));
                     break;
             case MOVE_UP:
+                this.orientation = NORTH;
                 this.speed.mult(createVector(1, -1));
                     break;
         }

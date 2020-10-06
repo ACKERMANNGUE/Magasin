@@ -44,7 +44,6 @@ class Counter {
      * Check if the counter is opened and if the queue isn't full
      */
     IsCounterOpenAndQueueIsNotFull(){
-        let result = false; 
         if(this.customers.length <= this.nbMaxCustomersInQueue){
             result = true;
         }
