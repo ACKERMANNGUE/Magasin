@@ -19,20 +19,13 @@ class Shop {
      * @param {*} nbCounters The number of checkouts desks
      * @param {*} counters The checkouts desks
      */
-    constructor(width, height, nbCounters) {
+    constructor(width, height, nbCounters, customers) {
         this.width = width;
         this.height = height;
+        this.customers = customers;
         this.counters = [];
         this.nbCounters = nbCounters;
-        this.InitCounters(100, 725, this.nbCounters);
-    }
-
-    /**
-     * Set the array of customers in the shop
-     * @param {*} customers Customers in the shop
-     */
-    SetCustomers(customers){
-        this.customers = customers;
+        this.InitCounters(100, 725, this.nbCounters, customers);
     }
 
     /**
@@ -41,45 +34,45 @@ class Shop {
      * @param {*} positionY Position Y of the start counter
      * @param {*} nbCounters Number of the counters
      */
-    InitCounters(positionX, positionY, nbCounters) {
-            let x = positionX;
-            let y = positionY;
+    InitCounters(positionX, positionY, nbCounters, customers) {
+        let x = positionX;
+        let y = positionY;
 
-            for (let i = 0; i < nbCounters; i++) {
-                let width = 75;
-                let height = 75;
-                this.counters.push(new Counter(x+(width + 10) * i, y, width, height, this.customers ,DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER, 30, 30));
-            }
+        for (let i = 0; i < nbCounters; i++) {
+            let width = 75;
+            let height = 75;
+            this.counters.push(new Counter(x + (width + 10) * i, y, width, height, customers, DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER, 30, 30));
+        }
     }
 
-    CustomerIsAgainstAWall(){
+    CustomerIsAgainstAWall() {
         for (let i = 0; i < this.customers.length; i++) {
             let realXCoordinate = this.customers[i].positionX + this.customers[i].width;
             let realYCoordinate = this.customers[i].positionY + this.customers[i].height;
 
-            if(realXCoordinate < 0){
+            if (realXCoordinate < 0) {
                 this.customers[i].Move(0);
             }
-            if(realYCoordinate < 0){ 
+            if (realYCoordinate < 0) {
                 this.customers[i].Move(1);
             }
-            if(realXCoordinate > WIDTH_CANVAS){
+            if (realXCoordinate > WIDTH_CANVAS) {
                 this.customers[i].Move(2);
             }
-            if(realYCoordinate > HEIGHT_CANVAS - 100){
+            if (realYCoordinate > HEIGHT_CANVAS - 100) {
                 this.customers[i].Move(3);
             }
         }
     }
-        
+
     /**
-    * Display the shop setted up
-    */
+     * Display the shop setted up
+     */
     Display() {
         background(233, 200, 45);
     }
 
-    DisplayCounters(){
+    DisplayCounters() {
         for (let i = 0; i < shop.counters.length; i++) {
             shop.counters[i].Display();
         }
