@@ -10,11 +10,6 @@ const MOVE_DOWN = 1;
 const MOVE_LEFT = 2;
 const MOVE_UP = 3;
 
-const EAST = 0;
-const SOUTH = 1;
-const WEST = 2;
-const NORTH = 3;
-
 const MILLISEC = 1000;
 
 class Customer {
@@ -39,6 +34,7 @@ class Customer {
         this.counters = counters;
         this.timeInShop = random(2, 4);
         this.orientation = NORTH;
+        this.IsWalkingTowardACounter = false;
     }
 
     SetCounters(counters) {
@@ -56,36 +52,37 @@ class Customer {
     DecreaseTimeInShop() {
         var counters = this.counters;
 
-        Math.floor(this.timeInShop / MILLISEC - 1);
-
         var actualTime = millis();
-
         if (actualTime > this.timeInShop * MILLISEC) {
             for (let i = 0; i < counters.length; i++) {
-                if (counters[i].IsCounterOpenAndQueueIsNotFull()) {
-                    //rotation mais à revoir
-                    // this.speed.x *= Math.cos(this.orientation * 90) + Math.sin(this.orientation * 90);
-                    // this.speed.y *= -Math.sin(this.orientation * 90) + Math.cos(this.orientation * 90);
+                if (counters[i].IsCounterOpenAndQueueIsNotFull() && !this.IsWalkingTowardACounter) {
+                   
+                    //Calcule la vitesse du vecteur 1
+                    var v1 = Math.sqrt(Math.pow(this.speed.x,2) + Math.pow(this.speed.y,2));
 
-
-                    //Reprendre notre position
-                    this.positionX;
-                    this.positionY;
-
-                    //Où est la caisse
-                    counters[i].positionX;
-                    counters[i].positionY;
-
-                    //Trajectoir du client à la caisse 
-
-                    //racine de (vitesse x^2 + vitesse y^2)
-                    let distanceBetweenCustomerAndCounter = Math.sqrt(Math.pow(this.positionX - counters[i].positionX, 2) + Math.pow(this.positionY - counters[i].positionY, 2))
-                    this.speed = this.speed.add(this.positionX - counters[i].positionX / actualTime, this.positionY - counters[i].positionY / actualTime);
-                    //Établir un vecteur y allant
+                    //Définir le cadran 
+                    var cadran;
+                    if(this.speed.x >= 0 && this.speed.y >= 0 ){
+                        cadran = 0;
+                    }else if(this.speed.x <= 0 && this.speed.y > 0 ){
+                        cadran = 90;
+                    }else if(this.speed.x < 0 && this.speed.y >= 0 ){
+                        cadran = 180;
+                    }else if(this.speed.x > 0 && this.speed.y < 0 ){
+                        cadran = 270;
+                    }
+                    //Calculer l'angle du nouveau vecteur
+                    var newAngle = Math.atan2(counters[i].positionY,this.positionX) * 180 / Math.PI;
+                    //Calculer les vitesses X et Y
+                    var v2x = v1 * Math.cos(cadran + newAngle);
+                    var v2y = v1 * Math.sin(cadran + newAngle);
+                    break;
                 }
             }
+            //Remplacer le vecteur 1 par le nouveau
+            this.speed = createVector(v2x,v2y);
+            this.IsWalkingTowardACounter = true;
         }
-
     }
 
     /**

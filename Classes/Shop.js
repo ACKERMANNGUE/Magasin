@@ -7,9 +7,19 @@
 
 const WIDTH_CANVAS = 1200;
 const HEIGHT_CANVAS = 800;
-const DEFAULT_NUMBER_COUNTERS = 8;
-const DEFAULT_NUMBER_CUSTOMERS = 3;
+
+const DEFAULT_X_POSITION_COUNTER = 100;
+const DEFAULT_Y_POSITION_COUNTER = 725;
+const OFFSET_BETWEEN_COUNTERS = 10;
 const DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER = 5;
+const DEFAULT_NUMBER_COUNTERS = 8;
+
+const DEFAULT_NUMBER_CUSTOMERS = 3;
+
+const EAST = 0;
+const SOUTH = 1;
+const WEST = 2;
+const NORTH = 3;
 
 class Shop {
     /**
@@ -25,7 +35,7 @@ class Shop {
         this.customers = customers;
         this.counters = [];
         this.nbCounters = nbCounters;
-        this.InitCounters(100, 725, this.nbCounters, customers);
+        this.InitCounters(DEFAULT_X_POSITION_COUNTER, DEFAULT_Y_POSITION_COUNTER, this.nbCounters, customers);
     }
 
     /**
@@ -41,26 +51,26 @@ class Shop {
         for (let i = 0; i < nbCounters; i++) {
             let width = 75;
             let height = 75;
-            this.counters.push(new Counter(x + (width + 10) * i, y, width, height, customers, DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER, 30, 30));
+            this.counters.push(new Counter(x + (width + OFFSET_BETWEEN_COUNTERS) * i, y, width, height, customers, DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER, 30, 30));
         }
     }
-
+    /**
+     * Check if the customer is against a wall and change the displacement of the customer
+     */
     CustomerIsAgainstAWall() {
         for (let i = 0; i < this.customers.length; i++) {
-            let realXCoordinate = this.customers[i].positionX + this.customers[i].width;
-            let realYCoordinate = this.customers[i].positionY + this.customers[i].height;
 
-            if (realXCoordinate < 0) {
-                this.customers[i].Move(0);
+            if (this.customers[i].positionX - this.customers[i].width / 2 < 0) {
+                this.customers[i].Move(EAST);
             }
-            if (realYCoordinate < 0) {
-                this.customers[i].Move(1);
+            if (this.customers[i].positionY - this.customers[i].height /2 < 0) {
+                this.customers[i].Move(SOUTH);
             }
-            if (realXCoordinate > WIDTH_CANVAS) {
-                this.customers[i].Move(2);
+            if (this.customers[i].positionX + this.customers[i].width /2 > WIDTH_CANVAS) {
+                this.customers[i].Move(WEST);
             }
-            if (realYCoordinate > HEIGHT_CANVAS - 100) {
-                this.customers[i].Move(3);
+            if (this.customers[i].positionY + this.customers[i].height /2 > HEIGHT_CANVAS - 100) {
+                this.customers[i].Move(NORTH);
             }
         }
     }
