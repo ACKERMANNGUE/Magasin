@@ -51,37 +51,37 @@ class Customer {
 
     DecreaseTimeInShop() {
         var counters = this.counters;
-
         var actualTime = millis();
-        if (actualTime > this.timeInShop * MILLISEC) {
+        if (actualTime > this.timeInShop * MILLISEC && !this.IsWalkingTowardACounter) {
             for (let i = 0; i < counters.length; i++) {
-                if (counters[i].IsCounterOpenAndQueueIsNotFull() && !this.IsWalkingTowardACounter) {
-                   
+                if (counters[i].IsCounterOpenAndQueueIsNotFull()) {
+
                     //Calcule la vitesse du vecteur 1
-                    var v1 = Math.sqrt(Math.pow(this.speed.x,2) + Math.pow(this.speed.y,2));
+                    var v1 = Math.sqrt(Math.pow(this.speed.x, 2) + Math.pow(this.speed.y, 2));
 
                     //Définir le cadran 
                     var cadran;
-                    if(this.speed.x >= 0 && this.speed.y >= 0 ){
+                    if (this.speed.x >= 0 && this.speed.y >= 0) {
                         cadran = 0;
-                    }else if(this.speed.x <= 0 && this.speed.y > 0 ){
+                    } else if (this.speed.x <= 0 && this.speed.y > 0) {
                         cadran = 90;
-                    }else if(this.speed.x < 0 && this.speed.y >= 0 ){
+                    } else if (this.speed.x < 0 && this.speed.y <= 0) {
                         cadran = 180;
-                    }else if(this.speed.x > 0 && this.speed.y < 0 ){
+                    } else if (this.speed.x > 0 && this.speed.y < 0) {
                         cadran = 270;
                     }
                     //Calculer l'angle du nouveau vecteur
-                    var newAngle = Math.atan2(counters[i].positionY,this.positionX) * 180 / Math.PI;
+                    var newAngle = Math.atan2(counters[i].positionY, this.positionX) * 180 / Math.PI;
                     //Calculer les vitesses X et Y
-                    var v2x = v1 * Math.cos(cadran + newAngle);
-                    var v2y = v1 * Math.sin(cadran + newAngle);
+                    var v2x = v1 * Math.cos(cadran - newAngle);
+                    var v2y = v1 * Math.sin(cadran - newAngle);
+                    this.IsWalkingTowardACounter = true;
                     break;
                 }
             }
             //Remplacer le vecteur 1 par le nouveau
-            this.speed = createVector(v2x,v2y);
-            this.IsWalkingTowardACounter = true;
+            this.speed = this.speed.add(createVector(v2x, v2y));
+
         }
     }
 
@@ -107,6 +107,8 @@ class Customer {
                 this.orientation = NORTH;
                 this.speed.mult(createVector(1, -1));
                 break;
+            default:
+                this.speed.mult(createVector(1, 1));
         }
         this.positionX += this.speed.x;
         this.positionY += this.speed.y;

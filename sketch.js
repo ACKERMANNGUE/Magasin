@@ -35,10 +35,10 @@ function draw() {
     shop.Display();
     shop.DisplayCounters();
     for (let i = 0; i < customers.length; i++) {
-        customers[i].Move();
         customers[i].Display();
         customers[i].DecreaseTimeInShop();
+        customers[i].Move();
+        console.log(customers[0].speed);
     }
     shop.CustomerIsAgainstAWall();
-
 }

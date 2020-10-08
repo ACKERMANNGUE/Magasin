@@ -14,7 +14,7 @@ const OFFSET_BETWEEN_COUNTERS = 10;
 const DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER = 5;
 const DEFAULT_NUMBER_COUNTERS = 8;
 
-const DEFAULT_NUMBER_CUSTOMERS = 3;
+const DEFAULT_NUMBER_CUSTOMERS = 1;
 
 const EAST = 0;
 const SOUTH = 1;
@@ -45,31 +45,31 @@ class Shop {
      * @param {*} nbCounters Number of the counters
      */
     InitCounters(positionX, positionY, nbCounters, customers) {
-        let x = positionX;
-        let y = positionY;
+            let x = positionX;
+            let y = positionY;
 
-        for (let i = 0; i < nbCounters; i++) {
-            let width = 75;
-            let height = 75;
-            this.counters.push(new Counter(x + (width + OFFSET_BETWEEN_COUNTERS) * i, y, width, height, customers, DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER, 30, 30));
+            for (let i = 0; i < nbCounters; i++) {
+                let width = 75;
+                let height = 75;
+                this.counters.push(new Counter(x + (width + OFFSET_BETWEEN_COUNTERS) * i, y, width, height, customers, DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER, 30, 30));
+            }
         }
-    }
-    /**
-     * Check if the customer is against a wall and change the displacement of the customer
-     */
+        /**
+         * Check if the customer is against a wall and change the displacement of the customer
+         */
     CustomerIsAgainstAWall() {
         for (let i = 0; i < this.customers.length; i++) {
 
             if (this.customers[i].positionX - this.customers[i].width / 2 < 0) {
                 this.customers[i].Move(EAST);
             }
-            if (this.customers[i].positionY - this.customers[i].height /2 < 0) {
+            if (this.customers[i].positionY - this.customers[i].height / 2 < 0) {
                 this.customers[i].Move(SOUTH);
             }
-            if (this.customers[i].positionX + this.customers[i].width /2 > WIDTH_CANVAS) {
+            if (this.customers[i].positionX + this.customers[i].width / 2 > WIDTH_CANVAS) {
                 this.customers[i].Move(WEST);
             }
-            if (this.customers[i].positionY + this.customers[i].height /2 > HEIGHT_CANVAS - 100) {
+            if (this.customers[i].positionY + this.customers[i].height / 2 > HEIGHT_CANVAS - 100) {
                 this.customers[i].Move(NORTH);
             }
         }
