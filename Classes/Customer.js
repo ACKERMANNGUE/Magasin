@@ -45,8 +45,8 @@ class Customer {
      * Display the customer
      */
     Display() {
-        fill(this.color);
-        rect(this.positionX, this.positionY, 100, 1);
+        this.drawArrow(createVector(this.positionX, this.positionY), createVector(100, 0), this.color);
+
         fill(this.color);
         ellipse(this.positionX, this.positionY, this.width, this.height);
     }
@@ -59,75 +59,88 @@ class Customer {
                 if (counters[i].IsCounterOpenAndQueueIsNotFull()) {
 
                     this.Toward(counters[i]);
-                    break;
                 }
             }
-            
+
         }
     }
 
     Toward(counter) {
-        //tant que this.position n'est pas égale à la position du comptoir
-        while (this.positionX != counter.positionX && this.positionY != counter.positionY) {
-            //déplacer vers
+        //Important https://p5js.org/reference/#/p5.Vector/rotate
+
+        this.IsWalkingTowardACounter = true;
+
             //Calcule la vitesse du vecteur 1
             var v1 = Math.sqrt(Math.pow(this.speed.x, 2) + Math.pow(this.speed.y, 2));
+
 
             //Définir le cadran 
             var cadran;
             if (this.speed.x >= 0 && this.speed.y >= 0) {
                 cadran = 0;
             } if (this.speed.x <= 0 && this.speed.y > 0) {
-                cadran = 90;
+                cadran = 270;
             } if (this.speed.x < 0 && this.speed.y <= 0) {
                 cadran = 180;
             } if (this.speed.x >= 0 && this.speed.y < 0) {
-                cadran = 270;
+                cadran = 90;
             }
+            //Reset l'angle
+            this.speed.rotate(-1 * this.speed.heading() * 180 / Math.PI);
             //Calculer l'angle du nouveau vecteur
-            var newAngle = cadran + Math.atan2(counter.positionY, this.positionX) * 180 / Math.PI;
+            var newAngle = Math.atan2(counter.positionY, this.positionX) * 180 / Math.PI;
+            //Modifier l'angle (tema si negatif ou pas)
+            this.speed.rotate((360 - (newAngle + cadran)));
+
             //Calculer les vitesses X et Y
-            var v2x = Math.cos(newAngle) * v1;
-            var v2y = Math.sin(newAngle) * v1;
-            this.IsWalkingTowardACounter = true;
-            //Remplacer le vecteur 1 par le nouveau
-        }
-        this.speed = createVector(v2x, v2y);
+            // var v2x = Math.cos(newAngle) * v1;
+            // var v2y = Math.sin(newAngle) * v1;
+            // //Remplacer le vecteur 1 par le nouveau
+            // this.speed += createVector(v2x, v2y);
+       // }
     }
+
+    drawArrow(base, vec, myColor) {
+        push();
+        stroke(myColor);
+        strokeWeight(3);
+        fill(myColor);
+        translate(base.x, base.y);
+        rotate(this.speed.heading());
+        let arrowSize = 7;
+        translate(vec.mag() - arrowSize, 0);
+        triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+        pop();
+      }
 
     /**
      * Move the customer in the specified direction
      * @param {*} direction The direction code
      */
     Move(direction) {
+        console.log(this.speed.heading()  * 180 / Math.PI);
+
         let angle;
         switch (direction) {
             case MOVE_RIGHT:
-                angle = 0;
                 this.orientation = EAST;
                 this.speed.mult(createVector(-1, 1));
                 break;
             case MOVE_DOWN:
-                angle = 270;
                 this.orientation = SOUTH;
                 this.speed.mult(createVector(1, -1));
                 break;
             case MOVE_LEFT:
-                angle = 180;
                 this.orientation = WEST;
                 this.speed.mult(createVector(-1, 1));
                 break;
             case MOVE_UP:
-                angle = 90;
                 this.orientation = NORTH;
                 this.speed.mult(createVector(1, -1));
                 break;
             default:
-                angle = 0;
                 this.speed.mult(createVector(1, 1));
         }
-        var a = Math.atan2(this.speed.y, this.speed.x) * 180 / Math.PI;
-        rotate(a + angle);
         this.positionX += this.speed.x;
         this.positionY += this.speed.y;
     }
