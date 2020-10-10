@@ -11,6 +11,7 @@ var customers = [];
  * Launched at the startup of the program
  */
 function setup() {
+    
     createCanvas(WIDTH_CANVAS, HEIGHT_CANVAS);
 
     /* Init the customers */
@@ -32,13 +33,14 @@ function setup() {
  * Launched at every frame
  */
 function draw() {
+
     shop.Display();
     shop.DisplayCounters();
+
     for (let i = 0; i < customers.length; i++) {
         customers[i].Display();
         customers[i].DecreaseTimeInShop();
         customers[i].Move();
-        console.log(customers[0].speed);
     }
     shop.CustomerIsAgainstAWall();
 }

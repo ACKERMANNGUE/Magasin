@@ -27,6 +27,7 @@ class Counter {
         this.customers = customers;
         this.nbMaxCustomersInQueue = nbMaxCustomersInQueue;
         this.color = color(0, 0, 255);
+        /* À revoir car ça doit aller dans Shop */
         this.timeOpen = timeOpen;
         this.timeClosed = timeClosed;
     }
@@ -36,6 +37,11 @@ class Counter {
      */
     Display() {
         noStroke();
+        if(!this.IsItOpened()){
+            this.color = color(0, 0, 255);
+        }else{
+            this.color = color(100, 200 ,0);
+        }
         fill(this.color);
         rect(this.positionX, this.positionY, this.width, this.height);
     }
@@ -46,9 +52,19 @@ class Counter {
     IsCounterOpenAndQueueIsNotFull() {
         var result;
         var customers = this.customers;
-        if (customers.length <= this.nbMaxCustomersInQueue) {
+        if (customers.length <= this.nbMaxCustomersInQueue && this.IsItOpened()) {
             result = true;
         }
         return result;
+    }
+
+    IsItOpened() {
+        var open = false;
+        var actualTime = millis();
+
+        if (actualTime > this.timeOpen * MILLISEC) {
+            open = true;
+        }
+        return open;
     }
 }
