@@ -18,6 +18,7 @@ class Customer {
      * Constructor of a customer
      * @param {*} positionX Position X of the customer
      * @param {*} positionY Position Y of the customer
+     * @param {*} positionY Start position of the customer
      * @param {*} width Width of the customer
      * @param {*} height Height of the customer
      * @param {*} speed Displacement speed of the customer
@@ -25,6 +26,7 @@ class Customer {
      * @param {*} color Color of the customer
      */
     constructor(positionX, positionY, width, height, speed, counters) {
+        this.startPos = createVector(positionX, positionY);
         this.positionX = positionX;
         this.positionY = positionY;
         this.width = width;
@@ -70,34 +72,34 @@ class Customer {
 
         this.IsWalkingTowardACounter = true;
 
-            //Calcule la vitesse du vecteur 1
-            var v1 = Math.sqrt(Math.pow(this.speed.x, 2) + Math.pow(this.speed.y, 2));
+        //Calcule la vitesse du vecteur 1
+        var v1 = this.speed.mag();
+        //Calcule l'angle du vecteur 1
+        var v1Angle = this.speed.heading();
+        //Temps écoulé
+        var seconds = millis() / MILLISEC;
+        var actualPosition = createVector(this.startPos.x + seconds * this.speed.x, this.startPos.y + seconds * this.speed.y);
 
+        this.startPos = actualPosition;
+        //V = vecteur temporaire
+        var v = createVector(this.speed.x, this.speed.y);
+        //reset à l'angle 0
+        v.rotate(-1 * v1Angle);
+        //Calcule nouvel angle
+        var newAngle = actualPosition.angleBetween(createVector(counter.positionX, counter.positionY));
+        // var newAngle = Math.atan2(counter.positionY, actualPosition.x);
 
-            //Définir le cadran 
-            var cadran;
-            if (this.speed.x >= 0 && this.speed.y >= 0) {
-                cadran = 0;
-            } if (this.speed.x <= 0 && this.speed.y > 0) {
-                cadran = 270;
-            } if (this.speed.x < 0 && this.speed.y <= 0) {
-                cadran = 180;
-            } if (this.speed.x >= 0 && this.speed.y < 0) {
-                cadran = 90;
-            }
-            //Reset l'angle
-            this.speed.rotate(-1 * this.speed.heading() * 180 / Math.PI);
-            //Calculer l'angle du nouveau vecteur
-            var newAngle = Math.atan2(counter.positionY, this.positionX) * 180 / Math.PI;
-            //Modifier l'angle (tema si negatif ou pas)
-            this.speed.rotate((360 - (newAngle + cadran)));
+        console.log("before " + v.heading());
+        //Si > que 180 (Ex : 220, transformer en 130)
+        if (newAngle > Math.PI) {
+            newAngle = Math.PI - newAngle;
+        }
 
-            //Calculer les vitesses X et Y
-            // var v2x = Math.cos(newAngle) * v1;
-            // var v2y = Math.sin(newAngle) * v1;
-            // //Remplacer le vecteur 1 par le nouveau
-            // this.speed += createVector(v2x, v2y);
-       // }
+        v.rotate(newAngle);
+
+        console.log("now " + v.heading());
+        //Attribuer les modifications
+        this.speed = v;
     }
 
     drawArrow(base, vec, myColor) {
@@ -111,14 +113,14 @@ class Customer {
         translate(vec.mag() - arrowSize, 0);
         triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
         pop();
-      }
+    }
 
     /**
      * Move the customer in the specified direction
      * @param {*} direction The direction code
      */
     Move(direction) {
-        console.log(this.speed.heading()  * 180 / Math.PI);
+        console.log(this.speed.heading() * 180 / Math.PI);
 
         let angle;
         switch (direction) {
