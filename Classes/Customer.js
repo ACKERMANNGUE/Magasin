@@ -10,6 +10,9 @@ const MOVE_DOWN = 1;
 const MOVE_LEFT = 2;
 const MOVE_UP = 3;
 
+const TIME_IN_SHOP = 5;
+const TIME_RETRY_SEARCH_COUNTER = 2;
+
 const MILLISEC = 1000;
 
 class Customer {
@@ -26,15 +29,13 @@ class Customer {
      * @param {*} color Color of the customer
      */
     constructor(positionX, positionY, width, height, speed, counters) {
-        this.startPos = createVector(positionX, positionY);
-        this.positionX = positionX;
-        this.positionY = positionY;
+        this.position = createVector(positionX, positionY);
         this.width = width;
         this.height = height;
         this.speed = speed;
         this.color = color(255, 255, 255);
         this.counters = counters;
-        this.timeInShop = random(2, 4);
+        this.timeInShop = random(0, TIME_IN_SHOP);
         this.orientation = NORTH;
         this.IsWalkingTowardACounter = false;
     }
@@ -47,59 +48,94 @@ class Customer {
      * Display the customer
      */
     Display() {
-        this.drawArrow(createVector(this.positionX, this.positionY), createVector(100, 0), this.color);
+        this.drawArrow(this.position, createVector(100, 0), this.color);
 
         fill(this.color);
-        ellipse(this.positionX, this.positionY, this.width, this.height);
+        ellipse(this.position.x, this.position.y, this.width, this.height);
     }
 
     DecreaseTimeInShop() {
         var counters = this.counters;
         var actualTime = millis();
-        if (actualTime > this.timeInShop * MILLISEC && !this.IsWalkingTowardACounter) {
+        if (actualTime > this.timeInShop * MILLISEC && !this.IsWalkingTowardACounter && counters != null) {
+            this.IsWalkingTowardACounter = true;
             for (let i = 0; i < counters.length; i++) {
                 if (counters[i].IsCounterOpenAndQueueIsNotFull()) {
 
-                    this.Toward(counters[i]);
+                    this.TowardTP(counters[i]);
+                } else {
+                    this.IsWalkingTowardACounter = false;
+                    this.timeInShop += actualTime + TIME_RETRY_SEARCH_COUNTER * MILLISEC;
                 }
             }
-
         }
     }
 
+    /**
+         * ALTERNATIVE : Moves the customer in the direction of the counter
+         * @param {*} counter The counter
+         */
+    TowardTP(counter) {
+        var offsetY = 0;
+        for (let i = 0; i <= counter.customers.length; i++) {
+            offsetY += this.height;
+        }
+        counter.customers.push(this);
+        this.position = createVector(counter.position.x + counter.width / 2, counter.position.y + counter.height / 2 - offsetY);
+        this.speed = createVector();
+    }
+
+
+
+    /**
+     * Moves the customer in the direction of the counter
+     * @param {*} counter The counter
+     */
     Toward(counter) {
         //Important https://p5js.org/reference/#/p5.Vector/rotate
 
         this.IsWalkingTowardACounter = true;
 
         //Calcule la vitesse du vecteur 1
-        var v1 = this.speed.mag();
-        //Calcule l'angle du vecteur 1
-        var v1Angle = this.speed.heading();
-        //Temps écoulé
-        var seconds = millis() / MILLISEC;
-        var actualPosition = createVector(this.startPos.x + seconds * this.speed.x, this.startPos.y + seconds * this.speed.y);
-
-        this.startPos = actualPosition;
-        //V = vecteur temporaire
-        var v = createVector(this.speed.x, this.speed.y);
-        //reset à l'angle 0
-        v.rotate(-1 * v1Angle);
-        //Calcule nouvel angle
-        var newAngle = actualPosition.angleBetween(createVector(counter.positionX, counter.positionY));
-        // var newAngle = Math.atan2(counter.positionY, actualPosition.x);
-
-        console.log("before " + v.heading());
-        //Si > que 180 (Ex : 220, transformer en 130)
-        if (newAngle > Math.PI) {
-            newAngle = Math.PI - newAngle;
-        }
+        var v1 = Math.sqrt(Math.pow(this.speed.x, 2) + Math.pow(this.speed.y, 2));
 
         v.rotate(newAngle);
 
-        console.log("now " + v.heading());
-        //Attribuer les modifications
-        this.speed = v;
+        //Définir le cadran 
+        var cadran;
+        if (this.speed.x >= 0 && this.speed.y == 0) {
+            cadran = 0;
+        } if (this.speed.x <= 0 && this.speed.y > 0) {
+            cadran = 90;
+        } if (this.speed.x < 0 && this.speed.y <= 0) {
+            cadran = 180;
+        } if (this.speed.x >= 0 && this.speed.y < 0) {
+            cadran = 270;
+        }
+
+        console.log("Actual : " + degrees(this.speed.heading()));
+
+
+
+        //Reset l'angle
+        //Calculer l'angle du nouveau vecteur
+        var newAngle = degrees(Math.atan2(counter.positionY, this.positionX)) + cadran;
+
+
+        console.log("Wanted : " + (newAngle));
+
+        //Modifier l'angle (tema si negatif ou pas)
+        //this.speed.rotate(newAngle);
+
+
+        //Calculer les vitesses X et Y
+        var v2x = Math.cos(newAngle) * v1;
+        var v2y = Math.sin(newAngle) * v1;
+        //Remplacer le vecteur 1 par le nouveau
+        this.speed = createVector(v2x, v2y);
+
+        console.log("New one : " + degrees(this.speed.heading()));
+        this.speed = vector2D();
     }
 
     drawArrow(base, vec, myColor) {
@@ -120,7 +156,6 @@ class Customer {
      * @param {*} direction The direction code
      */
     Move(direction) {
-        console.log(this.speed.heading() * 180 / Math.PI);
 
         let angle;
         switch (direction) {
@@ -143,7 +178,6 @@ class Customer {
             default:
                 this.speed.mult(createVector(1, 1));
         }
-        this.positionX += this.speed.x;
-        this.positionY += this.speed.y;
+        this.position.add(this.speed);
     }
 }

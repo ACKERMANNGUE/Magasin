@@ -5,18 +5,18 @@
  * Brief : Simulation of a shop's traffic
  */
 
-const WIDTH_CANVAS = 1200;
+const WIDTH_CANVAS = 800;
 const HEIGHT_CANVAS = 800;
 
 const DEFAULT_X_POSITION_COUNTER = 100;
 const DEFAULT_Y_POSITION_COUNTER = 725;
 const OFFSET_BETWEEN_COUNTERS = 10;
 const DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER = 5;
-const DEFAULT_NUMBER_COUNTERS = 1;
-const TIME_BEFORE_OPENING_A_NEW_COUNTER = 2;
+const DEFAULT_NUMBER_COUNTERS = 3;
+const TIME_BEFORE_OPENING_A_NEW_COUNTER = 10;
 const TIME_BEFORE_CLOSING = 30;
 
-const DEFAULT_NUMBER_CUSTOMERS = 1;
+const DEFAULT_NUMBER_CUSTOMERS = 3;
 
 const EAST = 0;
 const SOUTH = 1;
@@ -37,7 +37,7 @@ class Shop {
         this.customers = customers;
         this.counters = [];
         this.nbCounters = nbCounters;
-        this.InitCounters(DEFAULT_X_POSITION_COUNTER, DEFAULT_Y_POSITION_COUNTER, this.nbCounters, customers);
+        this.InitCounters(DEFAULT_X_POSITION_COUNTER, DEFAULT_Y_POSITION_COUNTER, this.nbCounters);
     }
 
     /**
@@ -54,8 +54,8 @@ class Shop {
             let width = 75;
             let height = 75;
             this.counters.push(
-                new Counter(x + (width + OFFSET_BETWEEN_COUNTERS) * i, y, width, height, customers,
-                nbCounters, TIME_BEFORE_OPENING_A_NEW_COUNTER, TIME_BEFORE_CLOSING)
+                new Counter(x + (width + OFFSET_BETWEEN_COUNTERS) * i, y, width, height,
+                nbCounters, random(0, TIME_BEFORE_OPENING_A_NEW_COUNTER), TIME_BEFORE_CLOSING)
              );
         }
     }
@@ -66,29 +66,29 @@ class Shop {
         for (let i = 0; i < this.customers.length; i++) {
             if (!customers[i].IsWalkingTowardACounter) {
 
-                if (this.customers[i].positionX - this.customers[i].width / 2 < 0) {
+                if (this.customers[i].position.x - this.customers[i].width / 2 < 0) {
                     this.customers[i].Move(EAST);
                 }
-                if (this.customers[i].positionY - this.customers[i].height / 2 < 0) {
+                if (this.customers[i].position.y - this.customers[i].height / 2 < 0) {
                     this.customers[i].Move(SOUTH);
                 }
-                if (this.customers[i].positionX + this.customers[i].width / 2 > WIDTH_CANVAS) {
+                if (this.customers[i].position.x + this.customers[i].width / 2 > WIDTH_CANVAS) {
                     this.customers[i].Move(WEST);
                 }
-                if (this.customers[i].positionY + this.customers[i].height / 2 > HEIGHT_CANVAS - 100) {
+                if (this.customers[i].position.y + this.customers[i].height / 2 > HEIGHT_CANVAS - 100) {
                     this.customers[i].Move(NORTH);
                 }
             } else {
-                if (this.customers[i].positionX - this.customers[i].width / 2 < 0) {
+                if (this.customers[i].position.x - this.customers[i].width / 2 < 0) {
                     this.customers[i].Move(EAST);
                 }
-                if (this.customers[i].positionY - this.customers[i].height / 2 < 0) {
+                if (this.customers[i].position.y - this.customers[i].height / 2 < 0) {
                     this.customers[i].Move(SOUTH);
                 }
-                if (this.customers[i].positionX + this.customers[i].width / 2 > WIDTH_CANVAS) {
+                if (this.customers[i].position.x + this.customers[i].width / 2 > WIDTH_CANVAS) {
                     this.customers[i].Move(WEST);
                 } 
-                if (this.customers[i].positionY + this.customers[i].height / 2 > HEIGHT_CANVAS) {
+                if (this.customers[i].position.y + this.customers[i].height / 2 > HEIGHT_CANVAS) {
                     this.customers[i].speed = createVector(0, 0);
                 }
             }

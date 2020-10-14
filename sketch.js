@@ -17,7 +17,7 @@ function setup() {
     /* Init the customers */
     for (let i = 0; i < DEFAULT_NUMBER_CUSTOMERS; i++) {
         customers.push(new Customer(WIDTH_CANVAS / 2, HEIGHT_CANVAS / 2,
-            30, 30, createVector(-3, 3)));
+            30, 30, createVector(3, 0)));
         // customers.push(new Customer(WIDTH_CANVAS / 2, HEIGHT_CANVAS / 2,
         //     30, 30, createVector(Math.floor(random(-5, 5)), Math.floor(random(-5, 5)))));
         customers[i].Display();
@@ -41,7 +41,9 @@ function draw() {
 
     for (let i = 0; i < customers.length; i++) {
         customers[i].Display();
-        customers[i].DecreaseTimeInShop();
+        if (!customers[i].IsWalkingTowardACounter) {
+            customers[i].DecreaseTimeInShop();
+        }
         customers[i].Move();
     }
     shop.CustomerIsAgainstAWall();

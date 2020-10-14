@@ -19,15 +19,13 @@ class Counter {
      * @param {*} timeClosed The time before a counter is closed in the absence of customers
      * @param {*} color The color of the counter
      */
-    constructor(positionX, positionY, width, height, customers, nbMaxCustomersInQueue, timeOpen, timeClosed) {
-        this.positionX = positionX;
-        this.positionY = positionY;
+    constructor(positionX, positionY, width, height, nbMaxCustomersInQueue, timeOpen, timeClosed) {
+        this.position = createVector(positionX, positionY);
         this.width = width;
         this.height = height;
-        this.customers = customers;
+        this.customers = [];
         this.nbMaxCustomersInQueue = nbMaxCustomersInQueue;
         this.color = color(0, 0, 255);
-        /* À revoir car ça doit aller dans Shop */
         this.timeOpen = timeOpen;
         this.timeClosed = timeClosed;
     }
@@ -37,13 +35,13 @@ class Counter {
      */
     Display() {
         noStroke();
-        if(!this.IsItOpened()){
+        if (!this.IsItOpened()) {
             this.color = color(0, 0, 255);
-        }else{
-            this.color = color(100, 200 ,0);
+        } else {
+            this.color = color(100, 200, 0);
         }
         fill(this.color);
-        rect(this.positionX, this.positionY, this.width, this.height);
+        rect(this.position.x, this.position.y, this.width, this.height);
     }
 
     /**
@@ -52,12 +50,14 @@ class Counter {
     IsCounterOpenAndQueueIsNotFull() {
         var result;
         var customers = this.customers;
-        if (customers.length <= this.nbMaxCustomersInQueue && this.IsItOpened()) {
+        if (customers.length + 1 <= this.nbMaxCustomersInQueue && this.IsItOpened()) {
             result = true;
         }
         return result;
     }
-
+    /**
+     * Check if the time before opening is ended
+     */
     IsItOpened() {
         var open = false;
         var actualTime = millis();
