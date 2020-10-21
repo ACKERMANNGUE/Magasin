@@ -5,6 +5,8 @@
  * Brief : Simulation of a shop's traffic
  */
 
+const MIN_TIME_AT_COUNTER = 3;
+const MAX_TIME_AT_COUNTER = 10;
 
 class Counter {
     /**
@@ -26,8 +28,26 @@ class Counter {
         this.customers = [];
         this.nbMaxCustomersInQueue = nbMaxCustomersInQueue;
         this.color = color(0, 0, 255);
-        this.timeOpen = timeOpen;
-        this.timeClosed = timeClosed;
+        this.timeOpen = timeOpen * MILLISEC;
+        this.timeClosed = timeClosed * MILLISEC;
+        this.timeAtCounter = random(MIN_TIME_AT_COUNTER, MAX_TIME_AT_COUNTER) * MILLISEC;
+    }
+
+    DecreaseTimeAtCounter() {
+        //tant que la file n'est pas vide
+        //decrease le timer pour le temps à la caisse
+
+        if (this.customers.length > 0) {
+            var actualTime = millis();
+            for (let i = 0; i < this.customers.length; i++) {
+                // 0 = first customer in the list
+                if (actualTime > this.timeAtCounter && this.customers[0].IsWalkingTowardACounter) {
+                    console.log("ancien" + this.customers[0]);
+                    this.customers.splice(0,1);
+                    console.log("nouveau" + this.customers[0]);
+                }
+            }
+        }
     }
 
     /**
@@ -50,7 +70,7 @@ class Counter {
     IsCounterOpenAndQueueIsNotFull() {
         var result;
         var customers = this.customers;
-        if (customers.length + 1 <= this.nbMaxCustomersInQueue && this.IsItOpened()) {
+        if (customers.length <= this.nbMaxCustomersInQueue && this.IsItOpened()) {
             result = true;
         }
         return result;
@@ -62,7 +82,7 @@ class Counter {
         var open = false;
         var actualTime = millis();
 
-        if (actualTime > this.timeOpen * MILLISEC) {
+        if (actualTime > this.timeOpen) {
             open = true;
         }
         return open;

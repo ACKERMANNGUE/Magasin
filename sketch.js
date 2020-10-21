@@ -46,5 +46,9 @@ function draw() {
         }
         customers[i].Move();
     }
+
+    for (let i = 0; i < shop.counters.length; i++) {
+        shop.counters[i].DecreaseTimeAtCounter();        
+    }
     shop.CustomerIsAgainstAWall();
 }

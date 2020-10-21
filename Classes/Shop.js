@@ -8,15 +8,18 @@
 const WIDTH_CANVAS = 800;
 const HEIGHT_CANVAS = 800;
 
+const DEFAULT_X_POSITION_TEXT_POSITION = WIDTH_CANVAS - 100;
+const DEFAULT_Y_POSITION_TEXT_POSITION = HEIGHT_CANVAS / 10;
+
 const DEFAULT_X_POSITION_COUNTER = 100;
 const DEFAULT_Y_POSITION_COUNTER = 725;
 const OFFSET_BETWEEN_COUNTERS = 10;
 const DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER = 5;
-const DEFAULT_NUMBER_COUNTERS = 3;
+const DEFAULT_NUMBER_COUNTERS = 5;
 const TIME_BEFORE_OPENING_A_NEW_COUNTER = 10;
 const TIME_BEFORE_CLOSING = 30;
 
-const DEFAULT_NUMBER_CUSTOMERS = 3;
+const DEFAULT_NUMBER_CUSTOMERS = 15;
 
 const EAST = 0;
 const SOUTH = 1;
@@ -99,7 +102,11 @@ class Shop {
      * Display the shop setted up
      */
     Display() {
-        background(233, 200, 45);
+        background(200, 200, 45);
+        textSize(25);
+        fill(255);
+        text(Math.floor(millis() / MILLISEC), DEFAULT_X_POSITION_TEXT_POSITION, DEFAULT_Y_POSITION_TEXT_POSITION);
+        textAlign(CENTER);
     }
 
     DisplayCounters() {

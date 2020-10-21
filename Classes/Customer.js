@@ -35,7 +35,8 @@ class Customer {
         this.speed = speed;
         this.color = color(255, 255, 255);
         this.counters = counters;
-        this.timeInShop = random(0, TIME_IN_SHOP);
+        //In millisec
+        this.timeInShop = random(0, TIME_IN_SHOP * MILLISEC);
         this.orientation = NORTH;
         this.IsWalkingTowardACounter = false;
     }
@@ -49,15 +50,21 @@ class Customer {
      */
     Display() {
         this.drawArrow(this.position, createVector(100, 0), this.color);
-
         fill(this.color);
         ellipse(this.position.x, this.position.y, this.width, this.height);
+        textSize(15);
+        fill(0);
+        text(Math.floor(this.timeInShop / MILLISEC), this.position.x, this.position.y);
+        textAlign(CENTER);
+       
     }
-
+    /**
+     * Decrease the time of the customer's in shop
+     */
     DecreaseTimeInShop() {
         var counters = this.counters;
         var actualTime = millis();
-        if (actualTime > this.timeInShop * MILLISEC && !this.IsWalkingTowardACounter && counters != null) {
+        if (actualTime > this.timeInShop && !this.IsWalkingTowardACounter && counters != null) {
             this.IsWalkingTowardACounter = true;
             for (let i = 0; i < counters.length; i++) {
                 if (counters[i].IsCounterOpenAndQueueIsNotFull()) {
@@ -65,7 +72,7 @@ class Customer {
                     this.TowardTP(counters[i]);
                 } else {
                     this.IsWalkingTowardACounter = false;
-                    this.timeInShop += actualTime + TIME_RETRY_SEARCH_COUNTER * MILLISEC;
+                    this.timeInShop += actualTime + (TIME_RETRY_SEARCH_COUNTER * MILLISEC);
                 }
             }
         }
@@ -81,7 +88,7 @@ class Customer {
             offsetY += this.height;
         }
         counter.customers.push(this);
-        this.position = createVector(counter.position.x + counter.width / 2, counter.position.y + counter.height / 2 - offsetY);
+        this.position = createVector(counter.position.x + counter.width / 2, (counter.position.y + counter.height / 2) - offsetY);
         this.speed = createVector();
     }
 
@@ -137,7 +144,12 @@ class Customer {
         console.log("New one : " + degrees(this.speed.heading()));
         this.speed = vector2D();
     }
-
+    /**
+     * Draw an arrow in the facing direction of the customer
+     * @param {*} base Customer's position
+     * @param {*} vec  Triangle position
+     * @param {*} myColor Color of the triangle
+     */
     drawArrow(base, vec, myColor) {
         push();
         stroke(myColor);
@@ -157,7 +169,6 @@ class Customer {
      */
     Move(direction) {
 
-        let angle;
         switch (direction) {
             case MOVE_RIGHT:
                 this.orientation = EAST;
