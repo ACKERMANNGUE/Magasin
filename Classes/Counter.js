@@ -7,6 +7,8 @@
 
 const MIN_TIME_AT_COUNTER = 3;
 const MAX_TIME_AT_COUNTER = 10;
+const DEFAULT_TIME_AT_COUNTER = (MIN_TIME_AT_COUNTER + MAX_TIME_AT_COUNTER) / 2;
+
 
 class Counter {
     /**
@@ -32,7 +34,9 @@ class Counter {
         this.timeClosed = timeClosed * MILLISEC;
         this.timeAtCounter = random(MIN_TIME_AT_COUNTER, MAX_TIME_AT_COUNTER) * MILLISEC;
     }
-
+    /**
+     * Decrease the time for a customer at a counter
+     */
     DecreaseTimeAtCounter() {
         //tant que la file n'est pas vide
         //decrease le timer pour le temps à la caisse
@@ -41,13 +45,29 @@ class Counter {
             var actualTime = millis();
             for (let i = 0; i < this.customers.length; i++) {
                 // 0 = first customer in the list
-                if (actualTime > this.timeAtCounter && this.customers[0].IsWalkingTowardACounter) {
-                    console.log("ancien" + this.customers[0]);
-                    this.customers.splice(0,1);
-                    console.log("nouveau" + this.customers[0]);
+                if (actualTime > this.timeAtCounter && this.customers[0].IsAtCounter) {
+                    this.customers = this.DeleteElementAndRebuildArray(0, this.customers);
+                    this.timeAtCounter = actualTime + DEFAULT_TIME_AT_COUNTER * MILLISEC;
                 }
             }
         }
+    }
+    /**
+     * Delete an element of an array and rebuild it with normalized indexes
+     * @param {*} index The index of the element that will be deleted
+     * @param {*} array The arrray that contains the element
+     */
+    DeleteElementAndRebuildArray(index, array) {
+        console.log(array[index].position);
+        delete array[index];
+        let tmpArr = array;
+        array = [];
+        for (let i = 0; i < tmpArr.length; i++) {
+            if (tmpArr[i] != null) {
+                array.push(tmpArr[i]);
+            }
+        }
+        return array;
     }
 
     /**
@@ -70,7 +90,7 @@ class Counter {
     IsCounterOpenAndQueueIsNotFull() {
         var result;
         var customers = this.customers;
-        if (customers.length <= this.nbMaxCustomersInQueue && this.IsItOpened()) {
+        if (customers.length + 1 <= this.nbMaxCustomersInQueue && this.IsItOpened()) {
             result = true;
         }
         return result;

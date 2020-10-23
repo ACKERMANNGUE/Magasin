@@ -39,6 +39,7 @@ class Customer {
         this.timeInShop = random(0, TIME_IN_SHOP * MILLISEC);
         this.orientation = NORTH;
         this.IsWalkingTowardACounter = false;
+        this.IsAtCounter = false;
     }
 
     SetCounters(counters) {
@@ -72,6 +73,7 @@ class Customer {
                     this.TowardTP(counters[i]);
                 } else {
                     this.IsWalkingTowardACounter = false;
+                    this.IsAtCounter = false;
                     this.timeInShop += actualTime + (TIME_RETRY_SEARCH_COUNTER * MILLISEC);
                 }
             }
@@ -90,6 +92,7 @@ class Customer {
         counter.customers.push(this);
         this.position = createVector(counter.position.x + counter.width / 2, (counter.position.y + counter.height / 2) - offsetY);
         this.speed = createVector();
+        this.IsAtCounter = true;
     }
 
 
