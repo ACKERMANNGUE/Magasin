@@ -16,10 +16,10 @@ function setup() {
 
     /* Init the customers */
     for (let i = 0; i < DEFAULT_NUMBER_CUSTOMERS; i++) {
-        customers.push(new Customer(WIDTH_CANVAS / 2, HEIGHT_CANVAS / 2,
-            30, 30, createVector(3, 0)));
         // customers.push(new Customer(WIDTH_CANVAS / 2, HEIGHT_CANVAS / 2,
-        //     30, 30, createVector(Math.floor(random(-5, 5)), Math.floor(random(-5, 5)))));
+        //     30, 30, createVector(3, 0)));
+        customers.push(new Customer(WIDTH_CANVAS / 2, HEIGHT_CANVAS / 2,
+            30, 30, createVector(Math.floor(random(-5, 5)), Math.floor(random(-5, 5)))));
         customers[i].Display();
         customers[i].DecreaseTimeInShop();
     }
@@ -51,4 +51,6 @@ function draw() {
         shop.counters[i].DecreaseTimeAtCounter();        
     }
     shop.CustomerIsAgainstAWall();
+    shop.GetActualTime();
+    shop.OpenNewCounter();
 }

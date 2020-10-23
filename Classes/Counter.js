@@ -5,6 +5,7 @@
  * Brief : Simulation of a shop's traffic
  */
 
+ /* Timing */
 const MIN_TIME_AT_COUNTER = 3;
 const MAX_TIME_AT_COUNTER = 10;
 const DEFAULT_TIME_AT_COUNTER = (MIN_TIME_AT_COUNTER + MAX_TIME_AT_COUNTER) / 2;
@@ -19,18 +20,18 @@ class Counter {
      * @param {*} height Height of the counter
      * @param {*} customers The list of all the customers present at the counter 
      * @param {*} nbMaxCustomersInQueue Maximum number of customers accepted in the queue 
-     * @param {*} timeOpen The time before a new counter is opened
+     * @param {*} opened State of the counter
      * @param {*} timeClosed The time before a counter is closed in the absence of customers
      * @param {*} color The color of the counter
      */
-    constructor(positionX, positionY, width, height, nbMaxCustomersInQueue, timeOpen, timeClosed) {
+    constructor(positionX, positionY, width, height, nbMaxCustomersInQueue, opened, timeClosed) {
         this.position = createVector(positionX, positionY);
         this.width = width;
         this.height = height;
         this.customers = [];
         this.nbMaxCustomersInQueue = nbMaxCustomersInQueue;
         this.color = color(0, 0, 255);
-        this.timeOpen = timeOpen * MILLISEC;
+        this.opened = opened;
         this.timeClosed = timeClosed * MILLISEC;
         this.timeAtCounter = random(MIN_TIME_AT_COUNTER, MAX_TIME_AT_COUNTER) * MILLISEC;
     }
@@ -53,12 +54,11 @@ class Counter {
         }
     }
     /**
-     * Delete an element of an array and rebuild it with normalized indexes
+     * Delete an element of an s and rebuild it with normalized indexes
      * @param {*} index The index of the element that will be deleted
      * @param {*} array The arrray that contains the element
      */
     DeleteElementAndRebuildArray(index, array) {
-        console.log(array[index].position);
         delete array[index];
         let tmpArr = array;
         array = [];
@@ -75,7 +75,7 @@ class Counter {
      */
     Display() {
         noStroke();
-        if (!this.IsItOpened()) {
+        if (!this.opened) {
             this.color = color(0, 0, 255);
         } else {
             this.color = color(100, 200, 0);
@@ -90,7 +90,7 @@ class Counter {
     IsCounterOpenAndQueueIsNotFull() {
         var result;
         var customers = this.customers;
-        if (customers.length + 1 <= this.nbMaxCustomersInQueue && this.IsItOpened()) {
+        if (customers.length + 1 <= this.nbMaxCustomersInQueue && this.opened) {
             result = true;
         }
         return result;

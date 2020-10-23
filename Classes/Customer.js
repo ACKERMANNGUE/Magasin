@@ -5,11 +5,7 @@
  * Brief : Simulation of a shop's traffic
  */
 
-const MOVE_RIGHT = 0;
-const MOVE_DOWN = 1;
-const MOVE_LEFT = 2;
-const MOVE_UP = 3;
-
+/* Timing */
 const TIME_IN_SHOP = 5;
 const TIME_RETRY_SEARCH_COUNTER = 2;
 
@@ -37,7 +33,6 @@ class Customer {
         this.counters = counters;
         //In millisec
         this.timeInShop = random(0, TIME_IN_SHOP * MILLISEC);
-        this.orientation = NORTH;
         this.IsWalkingTowardACounter = false;
         this.IsAtCounter = false;
     }
@@ -74,7 +69,7 @@ class Customer {
                 } else {
                     this.IsWalkingTowardACounter = false;
                     this.IsAtCounter = false;
-                    this.timeInShop += actualTime + (TIME_RETRY_SEARCH_COUNTER * MILLISEC);
+                    this.timeInShop = actualTime + (TIME_RETRY_SEARCH_COUNTER * MILLISEC);
                 }
             }
         }
@@ -173,20 +168,16 @@ class Customer {
     Move(direction) {
 
         switch (direction) {
-            case MOVE_RIGHT:
-                this.orientation = EAST;
+            case EAST:
                 this.speed.mult(createVector(-1, 1));
                 break;
-            case MOVE_DOWN:
-                this.orientation = SOUTH;
+            case SOUTH:
                 this.speed.mult(createVector(1, -1));
                 break;
-            case MOVE_LEFT:
-                this.orientation = WEST;
+            case WEST:
                 this.speed.mult(createVector(-1, 1));
                 break;
-            case MOVE_UP:
-                this.orientation = NORTH;
+            case NORTH:
                 this.speed.mult(createVector(1, -1));
                 break;
             default:
