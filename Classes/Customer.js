@@ -52,7 +52,6 @@ class Customer {
         fill(0);
         text(Math.floor(this.timeInShop / MILLISEC), this.position.x, this.position.y);
         textAlign(CENTER);
-       
     }
     /**
      * Decrease the time of the customer's in shop
@@ -67,8 +66,6 @@ class Customer {
 
                     this.TowardTP(counters[i]);
                 } else {
-                    this.IsWalkingTowardACounter = false;
-                    this.IsAtCounter = false;
                     this.timeInShop = actualTime + (TIME_RETRY_SEARCH_COUNTER * MILLISEC);
                 }
             }

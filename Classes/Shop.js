@@ -26,7 +26,7 @@ const TIME_BEFORE_OPENING_A_NEW_COUNTER = 10;
 const TIME_BEFORE_CLOSING = 30;
 
 /* Customers */
-const DEFAULT_NUMBER_CUSTOMERS = 50;
+const DEFAULT_NUMBER_CUSTOMERS = 3;
 
 /* Orientations */
 const EAST = 0;
@@ -79,33 +79,35 @@ class Shop {
      * Check if the customer is against a wall and change the displacement of the customer
      */
     CustomerIsAgainstAWall() {
-        for (let i = 0; i < this.customers.length; i++) {
-            if (!customers[i].IsWalkingTowardACounter) {
+        if (this.customers.length > 0) {
+            for (let i = 0; i < this.customers.length; i++) {
+                if (!this.customers[i].IsWalkingTowardACounter) {
 
-                if (this.customers[i].position.x - this.customers[i].width / 2 < 0) {
-                    this.customers[i].Move(EAST);
-                }
-                if (this.customers[i].position.y - this.customers[i].height / 2 < 0) {
-                    this.customers[i].Move(SOUTH);
-                }
-                if (this.customers[i].position.x + this.customers[i].width / 2 > WIDTH_CANVAS) {
-                    this.customers[i].Move(WEST);
-                }
-                if (this.customers[i].position.y + this.customers[i].height / 2 > HEIGHT_CANVAS - OFFSET) {
-                    this.customers[i].Move(NORTH);
-                }
-            } else {
-                if (this.customers[i].position.x - this.customers[i].width / 2 < 0) {
-                    this.customers[i].Move(EAST);
-                }
-                if (this.customers[i].position.y - this.customers[i].height / 2 < 0) {
-                    this.customers[i].Move(SOUTH);
-                }
-                if (this.customers[i].position.x + this.customers[i].width / 2 > WIDTH_CANVAS) {
-                    this.customers[i].Move(WEST);
-                }
-                if (this.customers[i].position.y + this.customers[i].height / 2 > HEIGHT_CANVAS) {
-                    this.customers[i].speed = createVector(0, 0);
+                    if (this.customers[i].position.x - this.customers[i].width / 2 < 0) {
+                        this.customers[i].Move(EAST);
+                    }
+                    if (this.customers[i].position.y - this.customers[i].height / 2 < 0) {
+                        this.customers[i].Move(SOUTH);
+                    }
+                    if (this.customers[i].position.x + this.customers[i].width / 2 > WIDTH_CANVAS) {
+                        this.customers[i].Move(WEST);
+                    }
+                    if (this.customers[i].position.y + this.customers[i].height / 2 > HEIGHT_CANVAS - OFFSET) {
+                        this.customers[i].Move(NORTH);
+                    }
+                } else {
+                    if (this.customers[i].position.x - this.customers[i].width / 2 < 0) {
+                        this.customers[i].Move(EAST);
+                    }
+                    if (this.customers[i].position.y - this.customers[i].height / 2 < 0) {
+                        this.customers[i].Move(SOUTH);
+                    }
+                    if (this.customers[i].position.x + this.customers[i].width / 2 > WIDTH_CANVAS) {
+                        this.customers[i].Move(WEST);
+                    }
+                    if (this.customers[i].position.y + this.customers[i].height / 2 > HEIGHT_CANVAS) {
+                        this.customers[i].speed = createVector(0, 0);
+                    }
                 }
             }
         }
@@ -136,25 +138,28 @@ class Shop {
         let actualTime = Math.floor(millis() / MILLISEC);
         this.minutes = actualTime % 60;
 
-        if(Math.floor(3 / actualTime) == 1){
+        if (Math.floor(3 / actualTime) == 1) {
             //Because it's called 60 times in a row (because of the framerate)
             this.hours += (1 / 60);
             this.minutes = 0;
         }
-        console.log(this.hours + ":" + this.minutes);
+        //console.log(this.hours + ":" + this.minutes);
     }
-
-    OpenNewCounter(){
-        let customersWantToBuy = []
+    /**
+     * Open a new counter 
+     */
+    OpenNewCounter() {
+        var customersWantToBuy = []
         for (let i = 0; i < this.customers.length; i++) {
-            if(this.customers[i].IsWalkingTowardACounter){
+            if (this.customers[i].IsAtCounter) {
                 customersWantToBuy.push(this.customers[i]);
-            }    
+            }
         }
-        if(customersWantToBuy.length / this.customers.length >= 1/3){
+        console.log(customersWantToBuy.length);
+        if (customersWantToBuy.length / this.customers.length >= 1 / 3) {
             //open new counter
             for (let i = 0; i < this.counters; i++) {
-                if(!this.counters[i].opened){
+                if (!this.counters[i].opened) {
                     this.counters[i].opened = true;
                     break;
                 }

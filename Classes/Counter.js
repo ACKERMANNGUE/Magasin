@@ -5,7 +5,7 @@
  * Brief : Simulation of a shop's traffic
  */
 
- /* Timing */
+/* Timing */
 const MIN_TIME_AT_COUNTER = 3;
 const MAX_TIME_AT_COUNTER = 10;
 const DEFAULT_TIME_AT_COUNTER = (MIN_TIME_AT_COUNTER + MAX_TIME_AT_COUNTER) / 2;
@@ -30,33 +30,45 @@ class Counter {
         this.height = height;
         this.customers = [];
         this.nbMaxCustomersInQueue = nbMaxCustomersInQueue;
-        this.color = color(0, 0, 255);
+        this.color = color(255, 15, 15);
         this.opened = opened;
         this.timeClosed = timeClosed * MILLISEC;
         this.timeAtCounter = random(MIN_TIME_AT_COUNTER, MAX_TIME_AT_COUNTER) * MILLISEC;
     }
+
     /**
      * Decrease the time for a customer at a counter
      */
-    DecreaseTimeAtCounter() {
-        //tant que la file n'est pas vide
-        //decrease le timer pour le temps à la caisse
-
+    DecreaseTimeAtCounter(shop) {
         if (this.customers.length > 0) {
             var actualTime = millis();
             for (let i = 0; i < this.customers.length; i++) {
                 // 0 = first customer in the list
-                if (actualTime > this.timeAtCounter && this.customers[0].IsAtCounter) {
-                    this.customers = this.DeleteElementAndRebuildArray(0, this.customers);
-                    this.timeAtCounter = actualTime + DEFAULT_TIME_AT_COUNTER * MILLISEC;
+                if (this.customers[0].IsAtCounter) {
+                    if (actualTime > this.timeAtCounter) {
+                        this.customers = this.DeleteElementAndRebuildArray(0, this.customers);
+                        shop.customers = this.DeleteIdenticCustomer(this.customers[0], shop.customers);
+                        this.timeAtCounter = DEFAULT_TIME_AT_COUNTER + actualTime;
+                    }
                 }
             }
         }
     }
+
+    DeleteIdenticCustomer(customer, customers){
+        for (let i = 0; i < customers.length; i++) {
+            if(customer === customers[i]){
+                customers = this.DeleteElementAndRebuildArray(i, customers);
+            }
+        }
+        return customers;
+    }
+
     /**
      * Delete an element of an s and rebuild it with normalized indexes
      * @param {*} index The index of the element that will be deleted
      * @param {*} array The arrray that contains the element
+     * @returns The array modified
      */
     DeleteElementAndRebuildArray(index, array) {
         delete array[index];
@@ -76,12 +88,16 @@ class Counter {
     Display() {
         noStroke();
         if (!this.opened) {
-            this.color = color(0, 0, 255);
+            this.color = color(255, 15, 15);
         } else {
             this.color = color(100, 200, 0);
         }
+       
         fill(this.color);
         rect(this.position.x, this.position.y, this.width, this.height);
+        textSize(15);
+        fill(0);
+        text(Math.floor(this.timeAtCounter / MILLISEC), this.position.x + 10, this.position.y+ 15);
     }
 
     /**
@@ -95,16 +111,5 @@ class Counter {
         }
         return result;
     }
-    /**
-     * Check if the time before opening is ended
-     */
-    IsItOpened() {
-        var open = false;
-        var actualTime = millis();
 
-        if (actualTime > this.timeOpen) {
-            open = true;
-        }
-        return open;
-    }
 }

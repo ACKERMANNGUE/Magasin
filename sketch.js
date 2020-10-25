@@ -5,13 +5,13 @@
  * Brief : Simulation of a shop's traffic
  */
 
-var customers = [];
+
 
 /**
  * Launched at the startup of the program
  */
 function setup() {
-
+    var customers = [];
     createCanvas(WIDTH_CANVAS, HEIGHT_CANVAS);
 
     /* Init the customers */
@@ -38,19 +38,24 @@ function draw() {
 
     shop.Display();
     shop.DisplayCounters();
-
-    for (let i = 0; i < customers.length; i++) {
-        customers[i].Display();
-        if (!customers[i].IsWalkingTowardACounter) {
-            customers[i].DecreaseTimeInShop();
-        }
-        customers[i].Move();
-    }
-
-    for (let i = 0; i < shop.counters.length; i++) {
-        shop.counters[i].DecreaseTimeAtCounter();        
-    }
-    shop.CustomerIsAgainstAWall();
     shop.GetActualTime();
     shop.OpenNewCounter();
+
+    if (shop.customers.length > 0) {
+
+        for (let i = 0; i < shop.customers.length; i++) {
+            shop.customers[i].Display();
+            if (!shop.customers[i].IsAtCounter) {
+                shop.customers[i].DecreaseTimeInShop();
+            }
+            shop.customers[i].Move();
+        }
+    }
+    if (shop.counters.length > 0) {
+        for (let i = 0; i < shop.counters.length; i++) {
+            shop.counters[i].DecreaseTimeAtCounter(shop);
+        }
+    }
+    shop.CustomerIsAgainstAWall();
+
 }
