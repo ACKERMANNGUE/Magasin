@@ -20,13 +20,12 @@ const DEFAULT_Y_POSITION_TEXT_POSITION = HEIGHT_CANVAS / 10;
 const DEFAULT_X_POSITION_COUNTER = 100;
 const DEFAULT_Y_POSITION_COUNTER = 725;
 const OFFSET_BETWEEN_COUNTERS = 10;
-const DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER = 5;
-const DEFAULT_NUMBER_COUNTERS = 5;
-const TIME_BEFORE_OPENING_A_NEW_COUNTER = 10;
-const TIME_BEFORE_CLOSING = 30;
+const DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER = 3;
+const DEFAULT_NUMBER_COUNTERS = 8;
+const TIME_BEFORE_CLOSING = 10;
 
 /* Customers */
-const DEFAULT_NUMBER_CUSTOMERS = 3;
+const DEFAULT_NUMBER_CUSTOMERS = 1;
 
 /* Orientations */
 const EAST = 0;
@@ -61,7 +60,7 @@ class Shop {
      * @param {*} positionY Position Y of the start counter
      * @param {*} nbCounters Number of the counters
      */
-    InitCounters(positionX, positionY, nbCounters, customers) {
+    InitCounters(positionX, positionY, nbCounters) {
         let x = positionX;
         let y = positionY;
 
@@ -70,7 +69,7 @@ class Shop {
             let height = 75;
             this.counters.push(
                 new Counter(x + (width + OFFSET_BETWEEN_COUNTERS) * i, y, width, height,
-                    nbCounters, false, TIME_BEFORE_CLOSING)
+                    DEFAULT_NUMBER_CUSTOMERS_AT_COUNTER, false, TIME_BEFORE_CLOSING)
             );
         }
         this.counters[0].opened = true;
@@ -123,14 +122,17 @@ class Shop {
         text(Math.floor(millis() / MILLISEC), DEFAULT_X_POSITION_TEXT_POSITION, DEFAULT_Y_POSITION_TEXT_POSITION);
         textAlign(CENTER);
     }
+
     /**
      * Display the existing counters
      */
+
     DisplayCounters() {
         for (let i = 0; i < shop.counters.length; i++) {
             shop.counters[i].Display();
         }
     }
+
     /**
      * Get the "real time" of the day | A refaire mais là trop relou
      */
@@ -145,11 +147,12 @@ class Shop {
         }
         //console.log(this.hours + ":" + this.minutes);
     }
+
     /**
      * Open a new counter 
      */
     OpenNewCounter() {
-        var customersWantToBuy = []
+        var customersWantToBuy = [];
         for (let i = 0; i < this.customers.length; i++) {
             if (this.customers[i].IsAtCounter) {
                 customersWantToBuy.push(this.customers[i]);
@@ -164,6 +167,17 @@ class Shop {
                     break;
                 }
                 break;
+            }
+        }
+    }
+    /**
+     * Decrease the time of counter before he closes
+     */
+    DecreaseTimeCounterOpen() {
+        let actualTime = millis();
+        for (let i = 0; i < counters.length; i++) {
+            if (this.counters[i].opened && this.counters[i].customers.length == 0 && this.counters[i].timeBeforeClosing < actualTime) {
+                this.counters[i].opened = false;
             }
         }
     }

@@ -43,12 +43,13 @@ class Counter {
         if (this.customers.length > 0) {
             var actualTime = millis();
             for (let i = 0; i < this.customers.length; i++) {
-                // 0 = first customer in the list
                 if (this.customers[0].IsAtCounter) {
                     if (actualTime > this.timeAtCounter) {
-                        this.customers = this.DeleteElementAndRebuildArray(0, this.customers);
-                        shop.customers = this.DeleteIdenticCustomer(this.customers[0], shop.customers);
-                        this.timeAtCounter = DEFAULT_TIME_AT_COUNTER + actualTime;
+                        let customers = this.customers.reverse();
+                        customers.pop();
+                        this.customers = customers;
+                        shop.counters.customer = customers;
+                        this.timeAtCounter = (DEFAULT_TIME_AT_COUNTER * MILLISEC) + actualTime;
                     }
                 }
             }

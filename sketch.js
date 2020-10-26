@@ -5,36 +5,54 @@
  * Brief : Simulation of a shop's traffic
  */
 
+/* Timing */
+const TIME_CYCLE_BEFORE_NEW_CUSTOMERS = 2;
+const MILLISEC = 1000;
 
+var customers = [];
+var newCycle = TIME_CYCLE_BEFORE_NEW_CUSTOMERS * MILLISEC;
 
 /**
  * Launched at the startup of the program
  */
 function setup() {
-    var customers = [];
     createCanvas(WIDTH_CANVAS, HEIGHT_CANVAS);
 
-    /* Init the customers */
-    for (let i = 0; i < DEFAULT_NUMBER_CUSTOMERS; i++) {
-        // customers.push(new Customer(WIDTH_CANVAS / 2, HEIGHT_CANVAS / 2,
-        //     30, 30, createVector(3, 0)));
-        customers.push(new Customer(WIDTH_CANVAS / 2, HEIGHT_CANVAS / 2,
-            30, 30, createVector(Math.floor(random(-5, 5)), Math.floor(random(-5, 5)))));
-        customers[i].Display();
-        customers[i].DecreaseTimeInShop();
-    }
-
     shop = new Shop(WIDTH_CANVAS, HEIGHT_CANVAS, DEFAULT_NUMBER_COUNTERS, customers);
-
-    for (let i = 0; i < customers.length; i++) {
-        customers[i].SetCounters(shop.counters);
-    }
+    customers = InitCustomers(DEFAULT_NUMBER_CUSTOMERS, customers, shop.counters);
+    
+    shop.customers = customers;
 
 }
+/**
+ * Create customers
+ * @param {*} number The number of customers to add
+ * @param {*} customers The array of the customers
+ * @param {*} counters The array of counters
+ */
+function InitCustomers(number, customers, counters) {
+    if(customers.length == 0){
+        customers = [];
+    }
+    for (let i = 0; i < number; i++) {
+        customers.push(new Customer(OFFSET, HEIGHT_CANVAS / 2,
+            30, 30, createVector(Math.floor(random(-5, 5)), Math.floor(random(-5, 5)))));
+        customers[i].SetCounters(counters);
+    }
+    return customers;
+}
+
 /**
  * Launched at every frame
  */
 function draw() {
+
+    var actualTime = millis();
+    if (actualTime > newCycle) {
+        shop.customers = InitCustomers(DEFAULT_NUMBER_CUSTOMERS, shop.customers, shop.counters);
+        
+        newCycle += actualTime;
+    }
 
     shop.Display();
     shop.DisplayCounters();

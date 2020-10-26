@@ -6,10 +6,9 @@
  */
 
 /* Timing */
-const TIME_IN_SHOP = 5;
-const TIME_RETRY_SEARCH_COUNTER = 2;
+const TIME_IN_SHOP = 3;
+const TIME_RETRY_SEARCH_COUNTER = 5;
 
-const MILLISEC = 1000;
 
 class Customer {
 
@@ -31,12 +30,14 @@ class Customer {
         this.speed = speed;
         this.color = color(255, 255, 255);
         this.counters = counters;
-        //In millisec
-        this.timeInShop = random(0, TIME_IN_SHOP * MILLISEC);
+        this.timeInShop = random(TIME_RETRY_SEARCH_COUNTER * MILLISEC, TIME_IN_SHOP * MILLISEC) + millis();
         this.IsWalkingTowardACounter = false;
         this.IsAtCounter = false;
     }
-
+    /**
+     * Set the counters for the customers
+     * @param {*} counters The counters
+     */
     SetCounters(counters) {
         this.counters = counters;
     }
@@ -53,6 +54,7 @@ class Customer {
         text(Math.floor(this.timeInShop / MILLISEC), this.position.x, this.position.y);
         textAlign(CENTER);
     }
+
     /**
      * Decrease the time of the customer's in shop
      */
@@ -60,10 +62,9 @@ class Customer {
         var counters = this.counters;
         var actualTime = millis();
         if (actualTime > this.timeInShop && !this.IsWalkingTowardACounter && counters != null) {
-            this.IsWalkingTowardACounter = true;
             for (let i = 0; i < counters.length; i++) {
                 if (counters[i].IsCounterOpenAndQueueIsNotFull()) {
-
+                    this.IsWalkingTowardACounter = true;
                     this.TowardTP(counters[i]);
                 } else {
                     this.timeInShop = actualTime + (TIME_RETRY_SEARCH_COUNTER * MILLISEC);
@@ -73,18 +74,19 @@ class Customer {
     }
 
     /**
-         * ALTERNATIVE : Moves the customer in the direction of the counter
-         * @param {*} counter The counter
-         */
+    * ALTERNATIVE : Moves the customer in the direction of the counter
+    * @param {*} counter The counter
+    */
     TowardTP(counter) {
         var offsetY = 0;
         for (let i = 0; i <= counter.customers.length; i++) {
             offsetY += this.height;
         }
-        counter.customers.push(this);
         this.position = createVector(counter.position.x + counter.width / 2, (counter.position.y + counter.height / 2) - offsetY);
         this.speed = createVector();
         this.IsAtCounter = true;
+        counter.customers.push(this);
+        counter.timeAtCounter += millis();
     }
 
 
@@ -139,6 +141,7 @@ class Customer {
         console.log("New one : " + degrees(this.speed.heading()));
         this.speed = vector2D();
     }
+
     /**
      * Draw an arrow in the facing direction of the customer
      * @param {*} base Customer's position
@@ -152,8 +155,8 @@ class Customer {
         fill(myColor);
         translate(base.x, base.y);
         rotate(this.speed.heading());
-        let arrowSize = 7;
-        translate(vec.mag() - arrowSize, 0);
+        let arrowSize = 15;
+        translate(arrowSize, 0);
         triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
         pop();
     }
