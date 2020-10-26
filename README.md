@@ -47,4 +47,4 @@ J’ai commencé le déplacement des clients en direction des caisses ouvertes.
 
 ## 26.10.2020
 > j’ai continué le système de caisses mais j’ai trop de problèmes et je me rends compte que c’était une mauvaise idée de se lancer dans une librairie javascript que je connais seulement un tout petit peu. J’aurais dû faire ce projet en C#, je pense que j’aurais peut-être mieux structurer mes objets ainsi que mon code dans son ensemble car le système de callback javascript, j’ai eu un grand nombre de problèmes à résoudre. Puis le dernier problème est celui des vecteurs, car j’ai passé 1 semaines à environ 1 à 2h par jours à tenter de résoudre les problèmes de vecteurs de P5.js
-En modifiant mon code aujourd'hui j'ai créé un problème que je n'ai pas sû fixé, mais il s'agit de la suppresion de la liste, qui fonctionnait en début de matinée quand vous êtes venus m'aider.
+En modifiant mon code aujourd'hui j'ai créé un problème que je n'ai pas sû fixé, mais il s'agit de la suppresion de la liste, qui fonctionnait en début de matinée quand vous êtes venus m'aider. Donc cela ne mérite vraiment pas 4 même pour l'effort. 
