@@ -48,69 +48,65 @@ class Counter {
                         let customers = this.customers.reverse();
                         customers.pop();
                         this.customers = customers;
-                        shop.counters.customer = customers;
-                        this.timeAtCounter = (DEFAULT_TIME_AT_COUNTER * MILLISEC) + actualTime;
+                        for (let j = 0; j < shop.counters.length; j++) {
+                            if (shop.customers[j] === this.customers[0]) {
+                                shop.customers[j] = this.DeleteElementAndRebuildArray(j, customers);
+                            }
+                        }
+                        shop.customers = customers;
                     }
+                    this.timeAtCounter = (DEFAULT_TIME_AT_COUNTER * MILLISEC) + actualTime;
                 }
             }
         }
     }
 
-    DeleteIdenticCustomer(customer, customers){
-        for (let i = 0; i < customers.length; i++) {
-            if(customer === customers[i]){
-                customers = this.DeleteElementAndRebuildArray(i, customers);
-            }
+/**
+ * Delete an element of an s and rebuild it with normalized indexes
+ * @param {*} index The index of the element that will be deleted
+ * @param {*} array The arrray that contains the element
+ * @returns The array modified
+ */
+DeleteElementAndRebuildArray(index, array) {
+    delete array[index];
+    let tmpArr = array;
+    array = [];
+    for (let i = 0; i < tmpArr.length; i++) {
+        if (tmpArr[i] != null) {
+            array.push(tmpArr[i]);
         }
-        return customers;
+    }
+    return array;
+}
+
+/**
+ * Display the counter
+ */
+Display() {
+    noStroke();
+    if (!this.opened) {
+        this.color = color(255, 15, 15);
+    } else {
+        this.color = color(100, 200, 0);
     }
 
-    /**
-     * Delete an element of an s and rebuild it with normalized indexes
-     * @param {*} index The index of the element that will be deleted
-     * @param {*} array The arrray that contains the element
-     * @returns The array modified
-     */
-    DeleteElementAndRebuildArray(index, array) {
-        delete array[index];
-        let tmpArr = array;
-        array = [];
-        for (let i = 0; i < tmpArr.length; i++) {
-            if (tmpArr[i] != null) {
-                array.push(tmpArr[i]);
-            }
-        }
-        return array;
-    }
+    fill(this.color);
+    rect(this.position.x, this.position.y, this.width, this.height);
+    textSize(15);
+    fill(0);
+    text(Math.floor(this.timeAtCounter / MILLISEC), this.position.x + 10, this.position.y + 15);
+}
 
-    /**
-     * Display the counter
-     */
-    Display() {
-        noStroke();
-        if (!this.opened) {
-            this.color = color(255, 15, 15);
-        } else {
-            this.color = color(100, 200, 0);
-        }
-       
-        fill(this.color);
-        rect(this.position.x, this.position.y, this.width, this.height);
-        textSize(15);
-        fill(0);
-        text(Math.floor(this.timeAtCounter / MILLISEC), this.position.x + 10, this.position.y+ 15);
+/**
+ * Check if the counter is opened and if the queue isn't full
+ */
+IsCounterOpenAndQueueIsNotFull() {
+    var result;
+    var customers = this.customers;
+    if (customers.length + 1 <= this.nbMaxCustomersInQueue && this.opened) {
+        result = true;
     }
-
-    /**
-     * Check if the counter is opened and if the queue isn't full
-     */
-    IsCounterOpenAndQueueIsNotFull() {
-        var result;
-        var customers = this.customers;
-        if (customers.length + 1 <= this.nbMaxCustomersInQueue && this.opened) {
-            result = true;
-        }
-        return result;
-    }
+    return result;
+}
 
 }

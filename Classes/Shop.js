@@ -176,7 +176,7 @@ class Shop {
     DecreaseTimeCounterOpen() {
         let actualTime = millis();
         for (let i = 0; i < counters.length; i++) {
-            if (this.counters[i].opened && this.counters[i].customers.length == 0 && this.counters[i].timeBeforeClosing < actualTime) {
+            if (this.counters[i].opened && this.counters[i].customers.length == 0 && this.counters[i].timeBeforeClosing > actualTime) {
                 this.counters[i].opened = false;
             }
         }
